@@ -1,4 +1,5 @@
-using Serilog;using Serilog.Events;
+using Microsoft.OpenApi.Models;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -14,9 +15,21 @@ try
 
     // Add services to the container.
     builder.Services.AddControllers();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", builder =>
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+        );
+    });
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc("v1",
+            new OpenApiInfo { Title = "ScoreTable", Version = "v1" });
+    });
 
     var app = builder.Build();
 
@@ -28,6 +41,8 @@ try
     }
 
     app.UseHttpsRedirection();
+
+    app.UseCors("AllowAll");
 
     app.MapControllers();
 
