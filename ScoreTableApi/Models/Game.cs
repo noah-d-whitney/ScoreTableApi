@@ -5,6 +5,7 @@ namespace ScoreTableApi.Models;
 public class Game
 {
     public int Id { get; set; }
+    
     public DateTime DateTime { get; set; }
 
     public List<Team> Teams { get; set; }
