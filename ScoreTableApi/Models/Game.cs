@@ -5,12 +5,12 @@ namespace ScoreTableApi.Models;
 public class Game
 {
     public int Id { get; set; }
-    
+
     public DateTime DateTime { get; set; }
 
-    public List<Team> Teams { get; set; }
+    public IList<Team> Teams { get; set; }
 
-    public List<PlayerStatline> PlayerStatlines { get; set; }
+    public IList<PlayerStatline> PlayerStatlines { get; set; }
 
     public int PeriodCount { get; set; }
     public int PeriodLength { get; set; }

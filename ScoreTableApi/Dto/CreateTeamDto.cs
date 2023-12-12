@@ -11,5 +11,5 @@ public class CreateTeamDto
 
     [Required]
     [Length(1, 15, ErrorMessage = "There can only be between 1 and 15 players on a team")]
-    public List<int> PlayerIds { get; set; }
+    public IList<int> PlayerIds { get; set; }
 }

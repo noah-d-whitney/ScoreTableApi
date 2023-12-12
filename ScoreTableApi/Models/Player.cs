@@ -6,6 +6,6 @@ public class Player
     public string FirstName { get; set; }
     public string? LastName { get; set; }
     public int? Number { get; set; }
-    public List<PlayerStatline>? PlayerStatlines { get; set; }
-    public List<Team>? Teams { get; set; }
+    public IList<PlayerStatline>? PlayerStatlines { get; set; }
+    public IList<Team>? Teams { get; set; }
 }
