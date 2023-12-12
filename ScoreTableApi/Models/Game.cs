@@ -7,11 +7,7 @@ public class Game
     public int Id { get; set; }
     public DateTime DateTime { get; set; }
 
-    public int TeamHomeId { get; set; }
-    public Team TeamHome { get; set; }
-
-    public int TeamAwayId { get; set; }
-    public Team TeamAway { get; set; }
+    public List<Team> Teams { get; set; }
 
     public List<PlayerStatline> PlayerStatlines { get; set; }
 
