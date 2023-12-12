@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using ScoreTableApi.Data;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -14,7 +15,7 @@ try
     builder.Host.UseSerilog();
 
     // Add services to the container.
-    builder.Services.AddControllers();
+    builder.Services.AddDbContext<DatabaseContext>();
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAll", builder =>
@@ -30,6 +31,7 @@ try
         options.SwaggerDoc("v1",
             new OpenApiInfo { Title = "ScoreTable", Version = "v1" });
     });
+    builder.Services.AddControllers();
 
     var app = builder.Build();
 
