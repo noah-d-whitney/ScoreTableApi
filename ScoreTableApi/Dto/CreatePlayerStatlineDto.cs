@@ -8,10 +8,10 @@ public class CreatePlayerStatlineDto
     public bool? IsStarter { get; set; }
 
     [Required]
-    public Game Game { get; set; }
+    public int GameId { get; set; }
 
     [Required]
-    public Player Player { get; set; }
+    public int PlayerId { get; set; }
 
     public int? Points { get; set; }
     public int? Rebounds { get; set; }
