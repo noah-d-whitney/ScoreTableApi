@@ -4,7 +4,6 @@ public class PlayerStatline
 {
     public int Id { get; set; }
     public bool IsStarter { get; set; }
-    public string Team { get; set; }
 
     public int GameId { get; set; }
     public Game Game { get; set; }
