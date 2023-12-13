@@ -1,6 +1,8 @@
 using Microsoft.OpenApi.Models;
 using ScoreTableApi.Configurations;
 using ScoreTableApi.Data;
+using ScoreTableApi.IRepository;
+using ScoreTableApi.Repository;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -26,6 +28,7 @@ try
         );
     });
     builder.Services.AddAutoMapper(typeof(MapperInitializer));
+    builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
@@ -33,7 +36,8 @@ try
         options.SwaggerDoc("v1",
             new OpenApiInfo { Title = "ScoreTable", Version = "v1" });
     });
-    builder.Services.AddControllers();
+    builder.Services.AddControllers().AddNewtonsoftJson(options => options
+        .SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
     var app = builder.Build();
 
