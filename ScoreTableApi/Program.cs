@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.OpenApi.Models;
 using ScoreTableApi.Configurations;
 using ScoreTableApi.Data;
@@ -29,7 +30,6 @@ try
     });
     builder.Services.AddAutoMapper(typeof(MapperInitializer));
     builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {

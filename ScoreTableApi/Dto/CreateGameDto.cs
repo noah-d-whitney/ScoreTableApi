@@ -18,8 +18,8 @@ public class CreateGameDto
 
     [Required]
     [Length(2, 2,  ErrorMessage = "A game must be assigned two teams")]
-    public IList<int> TeamIds { get; set; }
+    public IList<GameTeamDto> Teams { get; set; }
 
     [Required]
-    public int GameFormatId { get; set; }
+    public GameFormatDto GameFormat { get; set; }
 }
