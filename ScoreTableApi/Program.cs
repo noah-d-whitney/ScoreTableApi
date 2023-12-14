@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.OpenApi.Models;
 using ScoreTableApi.Configurations;
 using ScoreTableApi.Data;

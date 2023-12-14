@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Data;
 
-public class DatabaseContext : DbContext
+public class DatabaseContext : IdentityDbContext
 {
     public IConfiguration _config { get; set; }
     public DatabaseContext(DbContextOptions options, IConfiguration config) :
