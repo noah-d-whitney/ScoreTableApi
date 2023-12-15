@@ -4,7 +4,7 @@ using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Data;
 
-public class DatabaseContext : IdentityDbContext
+public class DatabaseContext : IdentityDbContext<User>
 {
     public IConfiguration _config { get; set; }
     public DatabaseContext(DbContextOptions options, IConfiguration config) :

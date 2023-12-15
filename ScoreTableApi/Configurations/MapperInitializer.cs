@@ -20,5 +20,6 @@ public class MapperInitializer : Profile
         CreateMap<PlayerStatline, CreatePlayerStatlineDto>().ReverseMap();
         CreateMap<GameStatus, GameStatusDto>().ReverseMap();
         CreateMap<GameFormat, GameFormatDto>().ReverseMap();
+        CreateMap<User, UserDto>().ReverseMap();
     }
 }

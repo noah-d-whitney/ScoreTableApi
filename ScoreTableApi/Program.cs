@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using ScoreTableApi;
 using ScoreTableApi.Configurations;
 using ScoreTableApi.Data;
 using ScoreTableApi.IRepository;
@@ -19,6 +20,8 @@ try
 
     // Add services to the container.
     builder.Services.AddDbContext<DatabaseContext>();
+    builder.Services.AddAuthentication();
+    builder.Services.ConfigureIdentity();
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAll", builder =>
