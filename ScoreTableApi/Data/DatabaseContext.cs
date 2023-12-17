@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ScoreTableApi.Configurations.Entities;
 using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Data;
@@ -17,6 +18,12 @@ public class DatabaseContext : IdentityDbContext<User>
     {
         optionsBuilder.UseSqlServer(
             _config.GetConnectionString("DatabaseConnection"));
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.ApplyConfiguration(new RoleConfiguration());
     }
 
     public DbSet<Game> Games { get; set; }

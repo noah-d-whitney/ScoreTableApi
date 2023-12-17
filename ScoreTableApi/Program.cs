@@ -22,6 +22,7 @@ try
     builder.Services.AddDbContext<DatabaseContext>();
     builder.Services.AddAuthentication();
     builder.Services.ConfigureIdentity();
+    builder.Services.ConfigureJwt(builder.Configuration);
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAll", builder =>
@@ -51,6 +52,8 @@ try
     }
 
     app.UseHttpsRedirection();
+
+    app.UseAuthentication();
 
     app.UseCors("AllowAll");
 

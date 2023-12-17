@@ -48,6 +48,7 @@ public class AccountController : ControllerBase
                 return BadRequest(ModelState);
             }
 
+            await _userManager.AddToRolesAsync(user, userDto.Roles);
             return Accepted();
         }
         catch (Exception ex)
