@@ -12,7 +12,7 @@ namespace ScoreTableApi.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
-    private readonly IAuthManager  _authManager;
+    private readonly IAuthManager _authManager;
     private readonly ILogger<AccountController> _logger;
     private readonly IMapper _mapper;
 
@@ -75,9 +75,9 @@ public class AccountController : ControllerBase
         {
             var isAuthorized = await _authManager.ValidateUser(userDto);
 
-            if (!isAuthorized) return Unauthorized(userDto);
+            if (!isAuthorized) return Unauthorized();
 
-            var token = await _authManager.CreateToken();
+            var token = new { token = await _authManager.CreateToken() };
 
             return Accepted(value: token);
         }
