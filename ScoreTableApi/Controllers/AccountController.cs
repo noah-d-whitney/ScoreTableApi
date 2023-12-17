@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ScoreTableApi.Dto;
 using ScoreTableApi.Models;
+using ScoreTableApi.Services;
 
 namespace ScoreTableApi.Controllers;
 
@@ -11,14 +12,15 @@ namespace ScoreTableApi.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
-    // private readonly SignInManager<User> _signInManager;
+    private readonly IAuthManager  _authManager;
     private readonly ILogger<AccountController> _logger;
     private readonly IMapper _mapper;
 
-    public AccountController(UserManager<User> userManager, ILogger<AccountController> logger,
-        IMapper mapper)
+    public AccountController(UserManager<User> userManager, IAuthManager authManager,
+        ILogger<AccountController> logger, IMapper mapper)
     {
         _userManager = userManager;
+        _authManager = authManager;
         _logger = logger;
         _mapper = mapper;
     }
@@ -59,30 +61,31 @@ public class AccountController : ControllerBase
         }
     }
 
-    // [HttpPost]
-    // [Route("Login")]
-    // [ProducesResponseType(StatusCodes.Status202Accepted)]
-    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    // [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    // public async Task<IActionResult> Login([FromBody] UserLoginDto userDto)
-    // {
-    //     _logger.LogInformation($"Login attempt for {userDto.Email}");
-    //     if (!ModelState.IsValid) return BadRequest(ModelState);
-    //
-    //     try
-    //     {
-    //         var result = await _signInManager.PasswordSignInAsync(userDto
-    //             .Email, userDto.Password, false, false);
-    //
-    //         if (!result.Succeeded) return Unauthorized(userDto);
-    //
-    //         return Accepted();
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         _logger.LogError(ex, $"Something went wrong in the {nameof(Login)}");
-    //         return Problem($"Something went wrong in the {nameof(Login)}",
-    //             statusCode: 500);
-    //     }
-    // }
+    [HttpPost]
+    [Route("Login")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Login([FromBody] UserLoginDto userDto)
+    {
+        _logger.LogInformation($"Login attempt for {userDto.Email}");
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var isAuthorized = await _authManager.ValidateUser(userDto);
+
+            if (!isAuthorized) return Unauthorized(userDto);
+
+            var token = await _authManager.CreateToken();
+
+            return Accepted(value: token);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Something went wrong in the {nameof(Login)}");
+            return Problem($"Something went wrong in the {nameof(Login)}",
+                statusCode: 500);
+        }
+    }
 }
