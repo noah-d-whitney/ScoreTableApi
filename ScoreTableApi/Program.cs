@@ -4,6 +4,7 @@ using ScoreTableApi.Configurations;
 using ScoreTableApi.Data;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Repository;
+using ScoreTableApi.Services;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -32,7 +33,10 @@ try
         );
     });
     builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
     builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+    builder.Services.AddScoped<IAuthManager, AuthManager>();
+
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {
