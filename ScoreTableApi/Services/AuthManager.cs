@@ -12,7 +12,7 @@ public class AuthManager : IAuthManager
 {
     private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
-    private  User? _user;
+    private User? _user;
 
     public AuthManager(UserManager<User> userManager, IConfiguration configuration)
     {
@@ -76,8 +76,16 @@ public class AuthManager : IAuthManager
 
     public async Task<bool> ValidateUser(UserLoginDto userDto)
     {
-        _user = await _userManager.FindByNameAsync(userDto.Email);
-        return _user != null && await _userManager.CheckPasswordAsync(_user, userDto.Password);
-    }
+        var user = await _userManager.FindByNameAsync(userDto.Email);
 
+        if (user == null) return false;
+
+        var isAuthorized = await _userManager.CheckPasswordAsync(user,
+            userDto.Password);
+
+        if (isAuthorized == false) return false;
+
+        _user = user;
+        return true;
+    }
 }
