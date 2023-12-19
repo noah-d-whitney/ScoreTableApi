@@ -7,10 +7,10 @@ namespace ScoreTableApi.Repository;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    private readonly DatabaseContext _context;
+    private readonly Data.DatabaseContext _context;
     private readonly DbSet<T> _db;
 
-    public GenericRepository(DatabaseContext context)
+    public GenericRepository(Data.DatabaseContext context)
     {
         _context = context;
         _db = _context.Set<T>();

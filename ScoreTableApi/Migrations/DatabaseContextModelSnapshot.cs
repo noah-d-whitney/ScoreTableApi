@@ -10,7 +10,7 @@ using ScoreTableApi.Data;
 
 namespace ScoreTableApi.Migrations
 {
-    [DbContext(typeof(DatabaseContext))]
+    [DbContext(typeof(Data.DatabaseContext))]
     partial class DatabaseContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace ScoreTableApi.Migrations
 
                     b.HasIndex("TeamsId");
 
-                    b.ToTable("GameTeam");
+                    b.ToTable("GameTeam", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -196,7 +196,7 @@ namespace ScoreTableApi.Migrations
 
                     b.HasIndex("TeamsId");
 
-                    b.ToTable("PlayerTeam");
+                    b.ToTable("PlayerTeam", (string)null);
                 });
 
             modelBuilder.Entity("ScoreTableApi.Models.Game", b =>
@@ -228,7 +228,7 @@ namespace ScoreTableApi.Migrations
 
                     b.HasIndex("GameStatusId");
 
-                    b.ToTable("Games");
+                    b.ToTable("Games", (string)null);
                 });
 
             modelBuilder.Entity("ScoreTableApi.Models.GameFormat", b =>
@@ -245,7 +245,7 @@ namespace ScoreTableApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GameFormat");
+                    b.ToTable("GameFormat", (string)null);
                 });
 
             modelBuilder.Entity("ScoreTableApi.Models.GameStatus", b =>
@@ -262,7 +262,7 @@ namespace ScoreTableApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GameStatus");
+                    b.ToTable("GameStatus", (string)null);
                 });
 
             modelBuilder.Entity("ScoreTableApi.Models.Player", b =>
@@ -285,7 +285,7 @@ namespace ScoreTableApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Players");
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("ScoreTableApi.Models.PlayerStatline", b =>
@@ -350,7 +350,7 @@ namespace ScoreTableApi.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("PlayerStatlines");
+                    b.ToTable("PlayerStatlines", (string)null);
                 });
 
             modelBuilder.Entity("ScoreTableApi.Models.Team", b =>
@@ -367,7 +367,7 @@ namespace ScoreTableApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("ScoreTableApi.Models.User", b =>

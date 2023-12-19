@@ -6,6 +6,7 @@ using ScoreTableApi.IRepository;
 using ScoreTableApi.Repository;
 using ScoreTableApi.Services;
 using Serilog;
+using DatabaseContext = ScoreTableApi.Data.DatabaseContext;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

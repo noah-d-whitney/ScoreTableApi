@@ -16,7 +16,7 @@ public static class ServiceExtensions
 
         builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole),
             services);
-        builder.AddEntityFrameworkStores<DatabaseContext>()
+        builder.AddEntityFrameworkStores<Data.DatabaseContext>()
             .AddDefaultTokenProviders();
     }
 

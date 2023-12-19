@@ -79,8 +79,9 @@ public class GameController : ControllerBase
 
         try
         {
-            var game = _mapper.Map<Game>(gameDto);
-            await _unitOfWork.Games.Insert(game);
+            var game = new Game();
+
+
             await _unitOfWork.Save();
 
             return CreatedAtRoute("GetGame", new { id = game.Id });

@@ -27,11 +27,8 @@ public class CreateGameDto
     public int PeriodLength { get; set; }
 
     [Required]
-    public int Team1Id { get; set; }
+    [Length(2, 2, ErrorMessage = "You must assign two teams to a game")]
+    public List<int> TeamIds { get; set; }
 
-    [Required]
-    public int Team2Id { get; set; }
-
-    [Required]
-    public string GameFormat { get; set; }
+    public int GameFormatId { get; set; }
 }

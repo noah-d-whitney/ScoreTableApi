@@ -1,9 +1,12 @@
-namespace ScoreTableApi.Models;
+﻿namespace ScoreTableApi.Models;
 
-public class Team
+public partial class Team
 {
     public int Id { get; set; }
-    public string Name { get; set; }
-    public IList<Player> Players { get; set; }
-    public IList<Game> Games { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public virtual ICollection<Game> Games { get; set; } = new List<Game>();
+
+    public virtual ICollection<Player> Players { get; set; } = new List<Player>();
 }
