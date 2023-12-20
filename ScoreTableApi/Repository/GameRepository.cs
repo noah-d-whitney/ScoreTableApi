@@ -1,21 +1,12 @@
-using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using ScoreTableApi.Dto;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Repository;
 
-public class GameRepository : IGameRepository
+public class GameRepository(Data.DatabaseContext _context) : IGameRepository
 {
-    private readonly Data.DatabaseContext _context;
-
-    public GameRepository(Data.DatabaseContext context)
-    {
-        _context = context;
-    }
-
     public async Task<ICollection<Game>> GetGames()
     {
         try
@@ -34,8 +25,7 @@ public class GameRepository : IGameRepository
         try
         {
             var game = await _context.Games.FindAsync(id);
-            if (game == null) throw new FileNotFoundException();
-            return game;
+            return game!;
         }
         catch (Exception ex)
         {
@@ -44,36 +34,44 @@ public class GameRepository : IGameRepository
         }
     }
 
-    public async Task<EntityEntry<Game>> CreateGame(CreateGameDto gameDto)
+    public async Task<EntityEntry<Game>> CreateGame(Game game)
     {
         try
         {
-            var gameTeams = new List<Team>();
-            foreach (var id in gameDto.TeamIds)
-            {
-                var team = await _context.Teams.FindAsync(id);
-                if (team == null) throw new NoNullAllowedException("Could Not Successfully Map Team Ids");
-                gameTeams.Add(team);
-            }
+            return await _context.Games.AddAsync(game);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
 
-            var gameFormat = await _context.GameFormats.FindAsync(gameDto
-                .GameFormatId);
-            var gameStatus = await _context.GameStatus.FindAsync(1);
+    public async Task<bool> GameExists(int id)
+    {
+        try
+        {
+            var game = await _context.Games.FindAsync(id);
+            return game != null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
 
-            if (gameStatus == null) throw new NoNullAllowedException("Could Not Successfully Map Game Status Id");
-            if (gameFormat == null) throw new NoNullAllowedException("Could Not Successfully Map Game Format Id");
+    public async Task DeleteGame(int id)
+    {
+        try
+        {
+            var game = await _context.Games.FindAsync(id);
 
-            var createdGame = new Game
-            {
-                Teams = gameTeams,
-                GameFormat = gameFormat,
-                GameStatus = gameStatus,
-                DateTime = gameDto.DateTime,
-                PeriodCount = gameDto.PeriodCount,
-                PeriodLength = gameDto.PeriodLength
-            };
+            if (game == null)
+                throw new ArgumentException(
+                    $"Could not find game with ID '{id}' for delete in {nameof(DeleteGame)}");
 
-            return await _context.Games.AddAsync(createdGame);
+            _context.Games.Remove(game);
         }
         catch (Exception ex)
         {

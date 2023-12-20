@@ -9,5 +9,7 @@ public interface IGameRepository
 {
     Task<ICollection<Game>> GetGames();
     Task<Game> GetGame(int id);
-    Task<EntityEntry<Game>> CreateGame(CreateGameDto gameDto);
+    Task<EntityEntry<Game>> CreateGame(Game game);
+    Task<bool> GameExists(int id);
+    Task DeleteGame(int id);
 }

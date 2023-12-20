@@ -1,6 +1,6 @@
-using System.Data;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using ScoreTableApi.Data;
 using ScoreTableApi.Dto;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
@@ -12,25 +12,31 @@ namespace ScoreTableApi.Controllers;
 public class GameController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly DatabaseContext _context;
     private readonly ILogger<GameController>  _logger;
     private readonly IMapper _mapper;
 
-    public GameController(IUnitOfWork unitOfWork, ILogger<GameController>
-            logger, IMapper mapper)
+    public GameController(IUnitOfWork unitOfWork, DatabaseContext context,
+        ILogger<GameController> logger, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _context = context;
         _logger = logger;
         _mapper = mapper;
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetGames()
     {
         try
         {
             var games = await _unitOfWork.Games.GetGames();
+
+            if (games.Count == 0) return NoContent();
+
             var results = _mapper.Map<IList<GameDto>>(games);
             return Ok(results);
         }
@@ -44,12 +50,17 @@ public class GameController : ControllerBase
 
     [HttpGet("{id:int}", Name = "GetGame")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetGame(int id)
     {
         try
         {
             var game = await _unitOfWork.Games.GetGame(id);
+
+            if (game == null)
+                return NotFound($"Game with ID '{id}' does not exist");
+
             var result = _mapper.Map<GameDto>(game);
             return Ok(result);
         } catch (Exception ex)
@@ -62,32 +73,79 @@ public class GameController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetGame([FromBody] CreateGameDto gameDto)
     {
         try
         {
             var gameTeams = new List<Team>();
+            for (var i = 0; i < gameDto.TeamIds.Count; i++)
+            {
+                var id = gameDto.TeamIds[i];
+                var team = await _context.Teams.FindAsync(id);
+                if (team == null) ModelState.AddModelError("TeamIds", $"Could not find Team {i + 1} with ID '{id}'");
+                gameTeams.Add(team!);
+            }
 
+            var gameFormat =
+                await _context.GameFormats.FindAsync(gameDto.GameFormatId);
+            if (gameFormat == null) ModelState.AddModelError("GameFormatId", $"Could not find game format with ID '{gameDto.GameFormatId}'");
 
-            var createdGame = await _unitOfWork.Games.CreateGame(gameDto);
-            if (createdGame == null) return StatusCode(500);
+            var gameStatusId = 1;
+            var gameStatus = await _context.GameStatus.FindAsync(gameStatusId);
+            if (gameStatus == null) ModelState.AddModelError("GameStatusId", $"Could not find game status with ID '{gameStatusId}'");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ValidationProblem(ModelState));
+
+            var game = new Game
+            {
+                Teams = gameTeams,
+                GameFormat = gameFormat!,
+                GameStatus = gameStatus!,
+                DateTime = gameDto.DateTime,
+                PeriodCount = gameDto.PeriodCount,
+                PeriodLength = gameDto.PeriodLength
+            };
+
+            var createdGame = await _unitOfWork.Games.CreateGame(game);
             await _unitOfWork.Save();
 
             return CreatedAtRoute("GetGame", new { id = createdGame.Entity.Id },
                 createdGame.Entity);
         }
-        catch (NoNullAllowedException ex)
+        catch (Exception ex)
         {
-            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)
-            }");
-            return StatusCode(400, ex);
-        } catch (FileNotFoundException ex)
+            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)}");
+            return StatusCode(500, ex);
+        }
+    }
+
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DeleteGame(int id)
+    {
+        try
         {
-            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)
-            }");
-            return StatusCode(404, ex);
+            var exists = await _unitOfWork.Games.GameExists(id);
+            if (!exists) ModelState.AddModelError("id", $"Could not find game with ID '{id}'");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ValidationProblem(ModelState));
+
+            await _unitOfWork.Games.DeleteGame(id);
+            await _unitOfWork.Save();
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)}");
+            return StatusCode(500, ex);
         }
     }
 }
