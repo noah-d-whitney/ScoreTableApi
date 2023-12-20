@@ -1,4 +1,6 @@
-using ScoreTableApi.Data;
+using System.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ScoreTableApi.Dto;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
@@ -14,13 +16,69 @@ public class GameRepository : IGameRepository
         _context = context;
     }
 
-    public ICollection<Game> GetGames()
+    public async Task<ICollection<Game>> GetGames()
     {
-        return _context.Games.OrderBy(g => g.Id).ToList();
+        try
+        {
+            return await _context.Games.OrderBy(g => g.Id).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
     }
 
-    public Game GetGame(int id)
+    public async Task<Game> GetGame(int id)
     {
-        return _context.Games.Find(id);
+        try
+        {
+            var game = await _context.Games.FindAsync(id);
+            if (game == null) throw new FileNotFoundException();
+            return game;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    public async Task<EntityEntry<Game>> CreateGame(CreateGameDto gameDto)
+    {
+        try
+        {
+            var gameTeams = new List<Team>();
+            foreach (var id in gameDto.TeamIds)
+            {
+                var team = await _context.Teams.FindAsync(id);
+                if (team == null) throw new NoNullAllowedException("Could Not Successfully Map Team Ids");
+                gameTeams.Add(team);
+            }
+
+            var gameFormat = await _context.GameFormats.FindAsync(gameDto
+                .GameFormatId);
+            var gameStatus = await _context.GameStatus.FindAsync(1);
+
+            if (gameStatus == null) throw new NoNullAllowedException("Could Not Successfully Map Game Status Id");
+            if (gameFormat == null) throw new NoNullAllowedException("Could Not Successfully Map Game Format Id");
+
+            var createdGame = new Game
+            {
+                Teams = gameTeams,
+                GameFormat = gameFormat,
+                GameStatus = gameStatus,
+                DateTime = gameDto.DateTime,
+                PeriodCount = gameDto.PeriodCount,
+                PeriodLength = gameDto.PeriodLength
+            };
+
+            return await _context.Games.AddAsync(createdGame);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
     }
 }

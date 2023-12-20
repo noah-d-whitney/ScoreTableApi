@@ -1,5 +1,5 @@
+using System.Data;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScoreTableApi.Dto;
 using ScoreTableApi.IRepository;
@@ -23,7 +23,6 @@ public class GameController : ControllerBase
         _mapper = mapper;
     }
 
-    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -31,8 +30,7 @@ public class GameController : ControllerBase
     {
         try
         {
-            var games = await  _unitOfWork.Games.GetAll(includes: new
-                List<String> {"GameStatus", "GameFormat"});
+            var games = await _unitOfWork.Games.GetGames();
             var results = _mapper.Map<IList<GameDto>>(games);
             return Ok(results);
         }
@@ -51,11 +49,10 @@ public class GameController : ControllerBase
     {
         try
         {
-            var game = await _unitOfWork.Games.Get(q => q.Id == id, new List<string> {"Teams", "GameFormat", "GameStatus", "Teams.Players"});
+            var game = await _unitOfWork.Games.GetGame(id);
             var result = _mapper.Map<GameDto>(game);
             return Ok(result);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)
                 }");
@@ -65,31 +62,32 @@ public class GameController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateGame(
-        [FromBody] CreateGameDto gameDto)
+    public async Task<IActionResult> GetGame([FromBody] CreateGameDto gameDto)
     {
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError($"Invalid POST attempted in {nameof(CreateGame)}");
-            return BadRequest(ModelState);
-        }
-
         try
         {
-            var game = new Game();
+            var gameTeams = new List<Team>();
 
 
+            var createdGame = await _unitOfWork.Games.CreateGame(gameDto);
+            if (createdGame == null) return StatusCode(500);
             await _unitOfWork.Save();
 
-            return CreatedAtRoute("GetGame", new { id = game.Id });
+            return CreatedAtRoute("GetGame", new { id = createdGame.Entity.Id },
+                createdGame.Entity);
         }
-        catch (Exception ex)
+        catch (NoNullAllowedException ex)
         {
-            _logger.LogError(ex, $"Something went wrong in the {nameof(CreateGame)}");
-            return StatusCode(500, "Internal Server Error. Please Try Again.");
+            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)
+            }");
+            return StatusCode(400, ex);
+        } catch (FileNotFoundException ex)
+        {
+            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)
+            }");
+            return StatusCode(404, ex);
         }
     }
 }
