@@ -15,13 +15,17 @@ public class MapperInitializer : Profile
 
     public MapperInitializer()
     {
+        CreateMap<Game, GameSummaryDto>()
+            .ForMember(dest => dest.GameStatus,
+                opt => opt.MapFrom(src => src.GameStatus.Name))
+            .ForMember(dest => dest.GameFormat,
+                opt => opt.MapFrom(src => src.GameFormat.Name));
         CreateMap<Team, TeamDto>().ReverseMap();
         CreateMap<Team, CreateTeamDto>().ReverseMap();
         CreateMap<Team, GameTeamDto>().ReverseMap();
         CreateMap<Player, PlayerDto>().ReverseMap();
         CreateMap<Player, CreatePlayerDto>().ReverseMap();
         CreateMap<Player, GamePlayerDto>().ReverseMap();
-        CreateMap<Game, GameDto>().ReverseMap();
         CreateMap<PlayerStatline, PlayerStatlineDto>().ReverseMap();
         CreateMap<PlayerStatline, CreatePlayerStatlineDto>().ReverseMap();
         CreateMap<User, UserDto>().ReverseMap();

@@ -37,7 +37,7 @@ public class GameController : ControllerBase
 
             if (games.Count == 0) return NoContent();
 
-            var results = _mapper.Map<IList<GameDto>>(games);
+            var results = _mapper.Map<IList<GameSummaryDto>>(games);
             return Ok(results);
         }
         catch (Exception ex)
@@ -61,7 +61,7 @@ public class GameController : ControllerBase
             if (game == null)
                 return NotFound($"Game with ID '{id}' does not exist");
 
-            var result = _mapper.Map<GameDto>(game);
+            var result = _mapper.Map<GameSummaryDto>(game);
             return Ok(result);
         } catch (Exception ex)
         {
