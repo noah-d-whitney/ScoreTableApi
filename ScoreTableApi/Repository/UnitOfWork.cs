@@ -7,8 +7,8 @@ namespace ScoreTableApi.Repository;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly DatabaseContext _context;
-    private IGameRepository _games;
-    private IGenericRepository<Player> _players;
+    private IBaseRepository<Game> _games;
+    private IBaseRepository<Player> _players;
     private IGenericRepository<Team> _teams;
     private IGenericRepository<PlayerStatline> _playerStatlines;
     private IGenericRepository<GameFormat> _gameFormats;
@@ -19,11 +19,11 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
     }
 
-    public IGameRepository Games => _games ??= new
+    public IBaseRepository<Game> Games => _games ??= new
         GameRepository(_context);
 
-    public IGenericRepository<Player> Players => _players ??= new
-        GenericRepository<Player>(_context);
+    public IBaseRepository<Player> Players => _players ??= new
+        PlayerRepository(_context);
 
     public IGenericRepository<Team> Teams => _teams ??= new
         GenericRepository<Team>(_context);

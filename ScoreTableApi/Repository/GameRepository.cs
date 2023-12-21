@@ -5,9 +5,10 @@ using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Repository;
 
-public class GameRepository(Data.DatabaseContext _context) : IGameRepository
+public class GameRepository(Data.DatabaseContext _context) :
+    IBaseRepository<Game>
 {
-    public async Task<ICollection<Game>> GetGames()
+    public async Task<ICollection<Game>> GetAll()
     {
         try
         {
@@ -20,7 +21,7 @@ public class GameRepository(Data.DatabaseContext _context) : IGameRepository
         }
     }
 
-    public async Task<Game> GetGame(int id)
+    public async Task<Game> Get(int id)
     {
         try
         {
@@ -38,7 +39,7 @@ public class GameRepository(Data.DatabaseContext _context) : IGameRepository
         }
     }
 
-    public async Task<EntityEntry<Game>> CreateGame(Game game)
+    public async Task<EntityEntry<Game>> Create(Game game)
     {
         try
         {
@@ -51,7 +52,7 @@ public class GameRepository(Data.DatabaseContext _context) : IGameRepository
         }
     }
 
-    public async Task<bool> GameExists(int id)
+    public async Task<bool> Exists(int id)
     {
         try
         {
@@ -65,7 +66,7 @@ public class GameRepository(Data.DatabaseContext _context) : IGameRepository
         }
     }
 
-    public async Task DeleteGame(int id)
+    public async Task<EntityEntry<Game>> Delete(int id)
     {
         try
         {
@@ -73,9 +74,9 @@ public class GameRepository(Data.DatabaseContext _context) : IGameRepository
 
             if (game == null)
                 throw new ArgumentException(
-                    $"Could not find game with ID '{id}' for delete in {nameof(DeleteGame)}");
+                    $"Could not find game with ID '{id}' for delete in {nameof(Delete)}");
 
-            _context.Games.Remove(game);
+            return _context.Games.Remove(game);
         }
         catch (Exception ex)
         {

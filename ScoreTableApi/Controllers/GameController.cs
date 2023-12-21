@@ -33,7 +33,7 @@ public class GameController : ControllerBase
     {
         try
         {
-            var games = await _unitOfWork.Games.GetGames();
+            var games = await _unitOfWork.Games.GetAll();
 
             if (games.Count == 0) return NoContent();
 
@@ -56,7 +56,7 @@ public class GameController : ControllerBase
     {
         try
         {
-            var game = await _unitOfWork.Games.GetGame(id);
+            var game = await _unitOfWork.Games.Get(id);
 
             if (game == null)
                 return NotFound($"Game with ID '{id}' does not exist");
@@ -112,7 +112,7 @@ public class GameController : ControllerBase
                 PeriodLength = gameDto.PeriodLength
             };
 
-            var createdGame = await _unitOfWork.Games.CreateGame(game);
+            var createdGame = await _unitOfWork.Games.Create(game);
             await _unitOfWork.Save();
 
             return CreatedAtRoute("GetGame", new { id = createdGame.Entity.Id },
@@ -133,13 +133,13 @@ public class GameController : ControllerBase
     {
         try
         {
-            var exists = await _unitOfWork.Games.GameExists(id);
+            var exists = await _unitOfWork.Games.Exists(id);
             if (!exists) ModelState.AddModelError("id", $"Could not find game with ID '{id}'");
 
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
-            await _unitOfWork.Games.DeleteGame(id);
+            await _unitOfWork.Games.Delete(id);
             await _unitOfWork.Save();
 
             return NoContent();

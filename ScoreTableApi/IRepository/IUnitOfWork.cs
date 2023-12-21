@@ -4,8 +4,8 @@ namespace ScoreTableApi.IRepository;
 
 public interface IUnitOfWork : IDisposable
 {
-    IGameRepository Games { get; }
-    IGenericRepository<Player> Players { get; }
+    IBaseRepository<Game> Games { get; }
+    IBaseRepository<Player> Players { get; }
     IGenericRepository<Team> Teams { get; }
     IGenericRepository<PlayerStatline> PlayerStatlines { get; }
     IGenericRepository<GameFormat> GameFormats { get; }
