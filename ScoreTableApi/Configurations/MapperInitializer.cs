@@ -22,11 +22,10 @@ public class MapperInitializer : Profile
             .ForMember(dest => dest.GameFormat,
                 opt => opt.MapFrom(
                     src => src.GameFormat.Name));
-        CreateMap<Team, TeamDto>().ReverseMap();
-        CreateMap<Team, CreateTeamDto>().ReverseMap();
-        CreateMap<Team, GameTeamDto>().ReverseMap();
-        CreateMap<Player, PlayerDto>().ReverseMap();
         CreateMap<Player, CreatePlayerDto>().ReverseMap();
+        CreateMap<Player, PlayerDto>().ReverseMap();
+        CreateMap<Team, TeamDto>().ReverseMap();
+        CreateMap<Team, GameTeamDto>().ReverseMap();
         CreateMap<Player, GamePlayerDto>().ReverseMap();
         CreateMap<PlayerStatline, PlayerStatlineDto>().ReverseMap();
         CreateMap<PlayerStatline, CreatePlayerStatlineDto>().ReverseMap();

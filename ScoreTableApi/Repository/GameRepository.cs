@@ -1,13 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ScoreTableApi.Data;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Repository;
 
-public class GameRepository(Data.DatabaseContext _context) :
-    IBaseRepository<Game>
+public class GameRepository : IBaseRepository<Game>
 {
+    private readonly DatabaseContext _context;
+
+    public GameRepository(DatabaseContext context)
+    {
+        _context = context;
+    }
+
     public async Task<ICollection<Game>> GetAll()
     {
         try
@@ -29,8 +36,8 @@ public class GameRepository(Data.DatabaseContext _context) :
                 .Where(g => g.Id == id)
                 .Include(g => g.GameFormat)
                 .Include(g => g.GameStatus)
-                .SingleAsync();
-            return game;
+                .SingleOrDefaultAsync();
+            return game!;
         }
         catch (Exception ex)
         {

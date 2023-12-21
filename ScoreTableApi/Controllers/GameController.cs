@@ -65,8 +65,7 @@ public class GameController : ControllerBase
             return Ok(result);
         } catch (Exception ex)
         {
-            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)
-                }");
+            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)}");
             return StatusCode(500,
                 "Internal Sever Error. Please try Again Later.");
         }
@@ -76,7 +75,7 @@ public class GameController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetGame([FromBody] CreateGameDto gameDto)
+    public async Task<IActionResult> CreateGame([FromBody] CreateGameDto gameDto)
     {
         try
         {
@@ -120,7 +119,7 @@ public class GameController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)}");
+            _logger.LogError(ex, $"Something went wrong in the {nameof(CreateGame)}");
             return StatusCode(500, ex);
         }
     }
@@ -146,7 +145,7 @@ public class GameController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)}");
+            _logger.LogError(ex, $"Something went wrong in the {nameof(DeleteGame)}");
             return StatusCode(500, ex);
         }
     }
