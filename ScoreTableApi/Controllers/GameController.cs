@@ -37,7 +37,7 @@ public class GameController : ControllerBase
 
             if (games.Count == 0) return NoContent();
 
-            var results = _mapper.Map<IList<GameSummaryDto>>(games);
+            var results = _mapper.Map<List<GameSummaryDto>>(games);
             return Ok(results);
         }
         catch (Exception ex)

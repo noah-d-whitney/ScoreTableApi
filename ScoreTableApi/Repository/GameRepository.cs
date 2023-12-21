@@ -24,8 +24,12 @@ public class GameRepository(Data.DatabaseContext _context) : IGameRepository
     {
         try
         {
-            var game = await _context.Games.FindAsync(id);
-            return game!;
+            var game = await _context.Games
+                .Where(g => g.Id == id)
+                .Include(g => g.GameFormat)
+                .Include(g => g.GameStatus)
+                .SingleAsync();
+            return game;
         }
         catch (Exception ex)
         {
