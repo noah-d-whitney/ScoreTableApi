@@ -95,7 +95,9 @@ public class GameController : ControllerBase
 
             var gameStatusId = 1;
             var gameStatus = await _context.GameStatus.FindAsync(gameStatusId);
-            if (gameStatus == null) ModelState.AddModelError("GameStatusId", $"Could not find game status with ID '{gameStatusId}'");
+            if (gameStatus == null)
+                ModelState.AddModelError("GameStatusId",
+                    $"Could not find game status with ID '{gameStatusId}'");
 
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));

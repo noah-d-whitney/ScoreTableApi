@@ -1,7 +1,6 @@
 using Microsoft.OpenApi.Models;
 using ScoreTableApi;
 using ScoreTableApi.Configurations;
-using ScoreTableApi.Data;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Repository;
 using ScoreTableApi.Services;
