@@ -9,7 +9,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly DatabaseContext _context;
     private IBaseRepository<Game> _games;
     private IBaseRepository<Player> _players;
-    private IGenericRepository<Team> _teams;
+    private IBaseRepository<Team> _teams;
     private IGenericRepository<PlayerStatline> _playerStatlines;
     private IGenericRepository<GameFormat> _gameFormats;
     private IGenericRepository<GameStatus> _gameStatuses;
@@ -25,8 +25,8 @@ public class UnitOfWork : IUnitOfWork
     public IBaseRepository<Player> Players => _players ??= new
         PlayerRepository(_context);
 
-    public IGenericRepository<Team> Teams => _teams ??= new
-        GenericRepository<Team>(_context);
+    public IBaseRepository<Team> Teams => _teams ??= new
+        TeamRepository(_context);
 
     public IGenericRepository<PlayerStatline> PlayerStatlines => _playerStatlines ??=
         new GenericRepository<PlayerStatline>(_context);

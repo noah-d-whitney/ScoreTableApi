@@ -8,7 +8,7 @@ public class TeamDto
     public string Name { get; set; }
     public List<GamePlayerDto> Players { get; set; }
     public int Id { get; set; }
-    public List<GameDto> Games { get; set; }
+    public List<GameSummaryDto> Games { get; set; }
 }
 
 public class CreateTeamDto
