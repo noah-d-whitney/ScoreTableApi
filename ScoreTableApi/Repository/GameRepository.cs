@@ -18,7 +18,7 @@ public class GameRepository : IBaseRepository<Game>
         _userService = userService;
     }
 
-    public async Task<ICollection<Game>> GetAll()
+    public async Task<ICollection<Game>> UserGetAll()
     {
         try
         {
@@ -34,11 +34,12 @@ public class GameRepository : IBaseRepository<Game>
         }
     }
 
-    public async Task<Game> Get(int id)
+    public async Task<Game> UserGet(int id)
     {
         try
         {
             var game = await _context.Games
+                .Where(g => g.UserId == _userService.GetUserId())
                 .Where(g => g.Id == id)
                 .Include(g => g.GameFormat)
                 .Include(g => g.GameStatus)
@@ -56,6 +57,7 @@ public class GameRepository : IBaseRepository<Game>
     {
         try
         {
+            game.UserId =  _userService.GetUserId();
             return await _context.Games.AddAsync(game);
         }
         catch (Exception ex)
@@ -65,11 +67,14 @@ public class GameRepository : IBaseRepository<Game>
         }
     }
 
-    public async Task<bool> Exists(int id)
+    public async Task<bool> UserExists(int id)
     {
         try
         {
-            var game = await _context.Games.FindAsync(id);
+            var game = await _context.Games
+                .Where(g => g.UserId == _userService.GetUserId())
+                .Where(g => g.Id == id)
+                .SingleOrDefaultAsync();
             return game != null;
         }
         catch (Exception ex)
@@ -79,15 +84,18 @@ public class GameRepository : IBaseRepository<Game>
         }
     }
 
-    public async Task<EntityEntry<Game>> Delete(int id)
+    public async Task<EntityEntry<Game>> UserDelete(int id)
     {
         try
         {
-            var game = await _context.Games.FindAsync(id);
+            var game = await _context.Games
+                .Where(g => g.UserId == _userService.GetUserId())
+                .Where(g => g.Id == id)
+                .SingleOrDefaultAsync();
 
             if (game == null)
                 throw new ArgumentException(
-                    $"Could not find game with ID '{id}' for delete in {nameof(Delete)}");
+                    $"Could not find game with ID '{id}' for delete in {nameof(UserDelete)}");
 
             return _context.Games.Remove(game);
         }

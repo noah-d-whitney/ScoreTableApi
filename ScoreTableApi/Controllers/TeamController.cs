@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScoreTableApi.Data;
 using ScoreTableApi.Dto;
@@ -28,6 +29,7 @@ public class TeamController : ControllerBase
         _userService = userService;
     }
 
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -36,7 +38,7 @@ public class TeamController : ControllerBase
     {
         try
         {
-            var teams = await _unitOfWork.Teams.GetAll();
+            var teams = await _unitOfWork.Teams.UserGetAll();
 
             if (teams.Count == 0) return NoContent();
 
@@ -51,6 +53,7 @@ public class TeamController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("{id:int}", Name = "GetTeam")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -59,7 +62,7 @@ public class TeamController : ControllerBase
     {
         try
         {
-            var team = await _unitOfWork.Teams.Get(id);
+            var team = await _unitOfWork.Teams.UserGet(id);
 
             if (team == null)
                 return NotFound($"Team with ID '{id}' does not exist");
@@ -75,6 +78,7 @@ public class TeamController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -95,14 +99,10 @@ public class TeamController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
-            var user = await _userService.GetUserData();
-            if (user == null) return BadRequest("Could not find user");
-
             var team = new Team
             {
                 Name = teamDto.Name,
                 Players = teamPlayers,
-                User = user
             };
 
             var createdTeam = await _unitOfWork.Teams.Create(team);
@@ -118,6 +118,7 @@ public class TeamController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -126,13 +127,13 @@ public class TeamController : ControllerBase
     {
         try
         {
-            var exists = await _unitOfWork.Teams.Exists(id);
+            var exists = await _unitOfWork.Teams.UserExists(id);
             if (!exists) ModelState.AddModelError("id", $"Could not find team with ID '{id}'");
 
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
-            await _unitOfWork.Teams.Delete(id);
+            await _unitOfWork.Teams.UserDelete(id);
             await _unitOfWork.Save();
 
             return NoContent();

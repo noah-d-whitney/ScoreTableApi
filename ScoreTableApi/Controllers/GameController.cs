@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +38,7 @@ public class GameController : ControllerBase
     {
         try
         {
-            var games = await _unitOfWork.Games.GetAll();
+            var games = await _unitOfWork.Games.UserGetAll();
 
             if (games.Count == 0) return NoContent();
 
@@ -54,6 +53,7 @@ public class GameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("{id:int}", Name = "GetGame")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -62,7 +62,7 @@ public class GameController : ControllerBase
     {
         try
         {
-            var game = await _unitOfWork.Games.Get(id);
+            var game = await _unitOfWork.Games.UserGet(id);
 
             if (game == null)
                 return NotFound($"Game with ID '{id}' does not exist");
@@ -109,13 +109,8 @@ public class GameController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
-            var user = await _userService.GetUserData();
-            if (user == null)
-                return BadRequest("Could not find/validate user profile");
-
             var game = new Game
             {
-                User = user,
                 Teams = gameTeams,
                 GameFormat = gameFormat!,
                 GameStatus = gameStatus!,
@@ -137,6 +132,7 @@ public class GameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -145,13 +141,13 @@ public class GameController : ControllerBase
     {
         try
         {
-            var exists = await _unitOfWork.Games.Exists(id);
+            var exists = await _unitOfWork.Games.UserExists(id);
             if (!exists) ModelState.AddModelError("id", $"Could not find game with ID '{id}'");
 
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
-            await _unitOfWork.Games.Delete(id);
+            await _unitOfWork.Games.UserDelete(id);
             await _unitOfWork.Save();
 
             return NoContent();

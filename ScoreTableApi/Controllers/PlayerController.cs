@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScoreTableApi.Dto;
 using ScoreTableApi.IRepository;
@@ -25,6 +26,7 @@ public class PlayerController : ControllerBase
         _userService = userService;
     }
 
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -33,7 +35,7 @@ public class PlayerController : ControllerBase
     {
         try
         {
-            var players = await _unitOfWork.Players.GetAll();
+            var players = await _unitOfWork.Players.UserGetAll();
 
             if (players.Count == 0) return NoContent();
 
@@ -48,6 +50,7 @@ public class PlayerController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("{id:int}", Name = "GetPlayer")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -56,7 +59,7 @@ public class PlayerController : ControllerBase
     {
         try
         {
-            var player = await _unitOfWork.Players.Get(id);
+            var player = await _unitOfWork.Players.UserGet(id);
 
             if (player == null)
                 return NotFound($"Player with ID '{id}' does not exist");
@@ -72,6 +75,7 @@ public class PlayerController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -102,6 +106,7 @@ public class PlayerController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -110,13 +115,13 @@ public class PlayerController : ControllerBase
     {
         try
         {
-            var exists = await _unitOfWork.Players.Exists(id);
+            var exists = await _unitOfWork.Players.UserExists(id);
             if (!exists) ModelState.AddModelError("id", $"Could not find player with ID '{id}'");
 
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
-            await _unitOfWork.Players.Delete(id);
+            await _unitOfWork.Players.UserDelete(id);
             await _unitOfWork.Save();
 
             return NoContent();

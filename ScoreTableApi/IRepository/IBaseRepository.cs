@@ -4,9 +4,9 @@ namespace ScoreTableApi.IRepository;
 
 public interface IBaseRepository<T> where T : class
 {
-    Task<ICollection<T>> GetAll();
-    Task<T> Get(int id);
+    Task<ICollection<T>> UserGetAll();
+    Task<T> UserGet(int id);
     Task<EntityEntry<T>> Create(T entity);
-    Task<bool> Exists(int id);
-    Task<EntityEntry<T>> Delete(int id);
+    Task<bool> UserExists(int id);
+    Task<EntityEntry<T>> UserDelete(int id);
 }
