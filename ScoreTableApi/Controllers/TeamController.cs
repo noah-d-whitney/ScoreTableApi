@@ -4,6 +4,7 @@ using ScoreTableApi.Data;
 using ScoreTableApi.Dto;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
+using ScoreTableApi.Services;
 
 namespace ScoreTableApi.Controllers;
 
@@ -15,14 +16,16 @@ public class TeamController : ControllerBase
     private readonly DatabaseContext _context;
     private readonly ILogger<GameController>  _logger;
     private readonly IMapper _mapper;
+    private readonly IUserService _userService;
 
     public TeamController(IUnitOfWork unitOfWork, DatabaseContext context,
-        ILogger<GameController> logger, IMapper mapper)
+        ILogger<GameController> logger, IMapper mapper, IUserService userService)
     {
         _unitOfWork = unitOfWork;
         _context = context;
         _logger = logger;
         _mapper = mapper;
+        _userService = userService;
     }
 
     [HttpGet]
@@ -92,10 +95,14 @@ public class TeamController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
+            var user = await _userService.GetUserData();
+            if (user == null) return BadRequest("Could not find user");
+
             var team = new Team
             {
                 Name = teamDto.Name,
-                Players = teamPlayers
+                Players = teamPlayers,
+                User = user
             };
 
             var createdTeam = await _unitOfWork.Teams.Create(team);

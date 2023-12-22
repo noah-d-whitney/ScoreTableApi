@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ScoreTableApi.Dto;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
+using ScoreTableApi.Services;
 
 namespace ScoreTableApi.Controllers;
 
@@ -13,13 +14,15 @@ public class PlayerController : ControllerBase
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<GameController>  _logger;
     private readonly IMapper _mapper;
+    private readonly IUserService _userService;
 
     public PlayerController(IUnitOfWork unitOfWork, ILogger<GameController>
-        logger, IMapper mapper)
+        logger, IMapper mapper, IUserService userService)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
         _mapper = mapper;
+        _userService = userService;
     }
 
     [HttpGet]
@@ -81,6 +84,10 @@ public class PlayerController : ControllerBase
 
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
+
+            var user = await _userService.GetUserData();
+            if (user == null) return BadRequest("Could not find user");
+            player.User = user;
 
             var createdPlayer = await _unitOfWork.Players.Create(player);
             await _unitOfWork.Save();

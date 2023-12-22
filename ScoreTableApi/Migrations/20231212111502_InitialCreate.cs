@@ -85,13 +85,13 @@ namespace ScoreTableApi.Migrations
                         column: x => x.GameFormatId,
                         principalTable: "GameFormat",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Games_GameStatus_GameStatusId",
                         column: x => x.GameStatusId,
                         principalTable: "GameStatus",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

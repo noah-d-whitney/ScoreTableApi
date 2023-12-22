@@ -3,23 +3,29 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ScoreTableApi.Data;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
+using ScoreTableApi.Services;
 
 namespace ScoreTableApi.Repository;
 
 public class GameRepository : IBaseRepository<Game>
 {
     private readonly DatabaseContext _context;
+    private readonly IUserService _userService;
 
-    public GameRepository(DatabaseContext context)
+    public GameRepository(DatabaseContext context, IUserService userService)
     {
         _context = context;
+        _userService = userService;
     }
 
     public async Task<ICollection<Game>> GetAll()
     {
         try
         {
-            return await _context.Games.OrderBy(g => g.Id).ToListAsync();
+            return await _context.Games
+                .Where(g => g.UserId == _userService.GetUserId())
+                .OrderBy(g => g.Id)
+                .ToListAsync();
         }
         catch (Exception ex)
         {

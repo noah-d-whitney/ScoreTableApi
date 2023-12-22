@@ -77,6 +77,7 @@ public class GameController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -104,11 +105,17 @@ public class GameController : ControllerBase
                 ModelState.AddModelError("GameStatusId",
                     $"Could not find game status with ID '{gameStatusId}'");
 
+
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
+            var user = await _userService.GetUserData();
+            if (user == null)
+                return BadRequest("Could not find/validate user profile");
+
             var game = new Game
             {
+                User = user,
                 Teams = gameTeams,
                 GameFormat = gameFormat!,
                 GameStatus = gameStatus!,

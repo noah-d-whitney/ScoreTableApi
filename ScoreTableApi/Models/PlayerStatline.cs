@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ScoreTableApi.Models;
 
-public partial class PlayerStatline
+public class PlayerStatline
 {
     public int Id { get; set; }
 
@@ -42,4 +42,7 @@ public partial class PlayerStatline
     public virtual Game Game { get; set; } = null!;
 
     public virtual Player Player { get; set; } = null!;
+
+    public string UserId { get; set; }
+    public User User { get; set; }
 }

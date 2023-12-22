@@ -21,6 +21,8 @@ public class GameSummaryDto
     public int PeriodLength { get; set; }
     public string GameFormat { get; set; }
     public string GameStatus { get; set; }
+    public string Team1 { get; set; }
+    public string Team2 { get; set; }
 }
 
 public class CreateGameDto
