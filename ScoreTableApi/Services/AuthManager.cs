@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using ScoreTableApi.Dto;
+using ScoreTableApi.Migrations;
 using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Services;
@@ -51,8 +52,8 @@ public class AuthManager : IAuthManager
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, _user.UserName),
-            new Claim(ClaimTypes.UserData, _user.Id)
+            new(ClaimTypes.Name, _user.UserName),
+            new(ClaimTypes.NameIdentifier, _user.Id),
         };
 
         var roles = await _userManager.GetRolesAsync(_user);

@@ -24,6 +24,8 @@ try
     builder.Services.AddAuthentication();
     builder.Services.ConfigureIdentity();
     builder.Services.ConfigureJwt(builder.Configuration);
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAll", builder =>

@@ -1,9 +1,12 @@
+using System.Security.Claims;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScoreTableApi.Data;
 using ScoreTableApi.Dto;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
+using ScoreTableApi.Services;
 
 namespace ScoreTableApi.Controllers;
 
@@ -13,18 +16,21 @@ public class GameController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly DatabaseContext _context;
+    private readonly IUserService _userService;
     private readonly ILogger<GameController>  _logger;
     private readonly IMapper _mapper;
 
     public GameController(IUnitOfWork unitOfWork, DatabaseContext context,
-        ILogger<GameController> logger, IMapper mapper)
+        ILogger<GameController> logger, IMapper mapper, IUserService userService)
     {
         _unitOfWork = unitOfWork;
         _context = context;
         _logger = logger;
         _mapper = mapper;
+        _userService = userService;
     }
 
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
