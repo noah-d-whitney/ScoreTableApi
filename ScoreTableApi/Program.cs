@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -25,6 +27,8 @@ try
     // Add services to the container.
     builder.Services.AddDbContext<DatabaseContext>();
     builder.Services.AddAuthentication();
+    builder.Services.Configure<CookieAuthenticationOptions>
+        (IdentityConstants.ApplicationScheme, o => o.Cookie.SameSite = SameSiteMode.None );
     builder.Services.AddIdentityApiEndpoints<User>()
         .AddEntityFrameworkStores<DatabaseContext>();
     builder.Services.AddHttpContextAccessor();
@@ -32,10 +36,10 @@ try
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAll", builder =>
-            builder.AllowAnyOrigin()
-                .AllowAnyMethod()
+            builder.WithOrigins("http://localhost:3000")
+                .AllowCredentials()
                 .AllowAnyHeader()
-        );
+                .AllowAnyMethod().WithExposedHeaders("set-cookie"));
     });
     builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
