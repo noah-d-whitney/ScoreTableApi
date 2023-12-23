@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using ScoreTableApi;
 using ScoreTableApi.Configurations;
 using ScoreTableApi.IRepository;
+using ScoreTableApi.Models;
 using ScoreTableApi.Repository;
 using ScoreTableApi.Services;
 using Serilog;
@@ -22,8 +25,8 @@ try
     // Add services to the container.
     builder.Services.AddDbContext<DatabaseContext>();
     builder.Services.AddAuthentication();
-    builder.Services.ConfigureIdentity();
-    builder.Services.ConfigureJwt(builder.Configuration);
+    builder.Services.AddIdentityApiEndpoints<User>()
+        .AddEntityFrameworkStores<DatabaseContext>();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddCors(options =>
@@ -82,6 +85,8 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+
+    app.MapIdentityApi<User>();
 
     app.UseHttpsRedirection();
 
