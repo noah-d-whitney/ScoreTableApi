@@ -24,7 +24,10 @@ public class GameRepository : IBaseRepository<Game>
         {
             return await _context.Games
                 .Where(g => g.UserId == _userService.GetUserId())
-                .OrderBy(g => g.Id)
+                .Include(g => g.GameStatus)
+                .Include(g => g.GameFormat)
+                .Include(g => g.Teams)
+                .OrderBy(g => g.DateTime)
                 .ToListAsync();
         }
         catch (Exception ex)

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ScoreTableApi.Dto.PlayerStatlines;
 using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Dto;

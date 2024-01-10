@@ -39,7 +39,7 @@ try
             builder.WithOrigins("http://localhost:3000")
                 .AllowCredentials()
                 .AllowAnyHeader()
-                .AllowAnyMethod().WithExposedHeaders("set-cookie"));
+                .AllowAnyMethod());
     });
     builder.Services.AddAutoMapper(typeof(MapperInitializer));
 

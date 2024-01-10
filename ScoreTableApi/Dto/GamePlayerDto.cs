@@ -1,3 +1,5 @@
+using ScoreTableApi.Dto.PlayerStatlines;
+
 namespace ScoreTableApi.Dto;
 
 public class GamePlayerDto

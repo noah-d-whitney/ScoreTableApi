@@ -41,7 +41,7 @@ public class GameController : ControllerBase
             var games = await _unitOfWork.Games.UserGetAll();
 
             if (games.Count == 0) return NoContent();
-
+            Console.WriteLine(games);
             var results = _mapper.Map<List<GameSummaryDto>>(games);
             return Ok(results);
         }
