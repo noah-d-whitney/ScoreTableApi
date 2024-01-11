@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScoreTableApi.Data;
 using ScoreTableApi.Dto;
+using ScoreTableApi.Dto.Team;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
 using ScoreTableApi.Services;

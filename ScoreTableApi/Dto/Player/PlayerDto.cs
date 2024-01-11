@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using ScoreTableApi.Dto.PlayerStatlines;
-using ScoreTableApi.Models;
+using ScoreTableApi.Dto.Statline;
+using ScoreTableApi.Dto.Team;
 
-namespace ScoreTableApi.Dto;
+namespace ScoreTableApi.Dto.Player;
 
 public class PlayerDto : CreatePlayerDto
 {

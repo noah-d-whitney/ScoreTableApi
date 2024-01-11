@@ -45,6 +45,7 @@ try
 
     builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
     builder.Services.AddScoped<IAuthManager, AuthManager>();
+    builder.Services.AddScoped<IGameService, GameService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>

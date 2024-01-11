@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using ScoreTableApi.Models;
+using ScoreTableApi.Dto.Game;
 
-namespace ScoreTableApi.Dto;
+namespace ScoreTableApi.Dto.Team;
 
 public class TeamDto
 {
@@ -20,10 +20,4 @@ public class CreateTeamDto
     [Required]
     [Length(1, 15, ErrorMessage = "There can only be between 1 and 15 players on a team")]
     public List<int> PlayerIds { get; set; }
-}
-
-public class GameTeamDto
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
 }

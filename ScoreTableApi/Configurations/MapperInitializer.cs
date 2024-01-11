@@ -1,6 +1,9 @@
 using AutoMapper;
-using ScoreTableApi.Dto;
-using ScoreTableApi.Dto.PlayerStatlines;
+using ScoreTableApi.Dto.Game;
+using ScoreTableApi.Dto.Player;
+using ScoreTableApi.Dto.Statline;
+using ScoreTableApi.Dto.Team;
+using ScoreTableApi.Dto.User;
 using ScoreTableApi.Models;
 
 namespace ScoreTableApi.Configurations;
@@ -16,17 +19,14 @@ public class MapperInitializer : Profile
 
     public MapperInitializer()
     {
-        CreateMap<Game, GameSummaryDto>()
-            .ForMember(dest => dest.GameStatus,
-                opt => opt.MapFrom(
-                    src => src.GameStatus.Name))
-            .ForMember(dest => dest.GameFormat,
-                opt => opt.MapFrom(
-                    src => src.GameFormat.Name));
+        CreateMap<Game, GameSummaryDto>().ReverseMap();
+        CreateMap<Game, GameDto>().ReverseMap();
         CreateMap<Player, GamePlayerDto>().ReverseMap();
         CreateMap<Player, CreatePlayerDto>().ReverseMap();
         CreateMap<Player, PlayerDto>().ReverseMap();
         CreateMap<Team, TeamDto>().ReverseMap();
+        CreateMap<GameFormat, GameFormatDto>().ReverseMap();
+        CreateMap<GameStatus, GameStatusDto>().ReverseMap();
         CreateMap<Team, GameTeamDto>().ReverseMap();
         CreateMap<PlayerStatline, PlayerStatlineDto>().ReverseMap();
         CreateMap<PlayerStatline, CreatePlayerStatlineDto>().ReverseMap();

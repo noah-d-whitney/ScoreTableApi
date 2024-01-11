@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ScoreTableApi.Dto;
+namespace ScoreTableApi.Dto.User;
 
 public class UserLoginDto
 {

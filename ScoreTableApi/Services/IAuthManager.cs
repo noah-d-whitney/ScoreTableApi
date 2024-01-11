@@ -1,4 +1,5 @@
 using ScoreTableApi.Dto;
+using ScoreTableApi.Dto.User;
 
 namespace ScoreTableApi.Services;
 

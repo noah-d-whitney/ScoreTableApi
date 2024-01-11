@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ScoreTableApi.Dto.PlayerStatlines;
+namespace ScoreTableApi.Dto.Statline;
 
 public class CreatePlayerStatlineDto
 {

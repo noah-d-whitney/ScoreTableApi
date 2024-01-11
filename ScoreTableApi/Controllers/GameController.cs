@@ -1,8 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ScoreTableApi.Data;
-using ScoreTableApi.Dto;
+using ScoreTableApi.Dto.Game;
+using ScoreTableApi.Dto.Statline;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
 using ScoreTableApi.Services;
@@ -18,15 +20,19 @@ public class GameController : ControllerBase
     private readonly IUserService _userService;
     private readonly ILogger<GameController>  _logger;
     private readonly IMapper _mapper;
+    private readonly IGameService _gameService;
 
     public GameController(IUnitOfWork unitOfWork, DatabaseContext context,
-        ILogger<GameController> logger, IMapper mapper, IUserService userService)
+        ILogger<GameController> logger, IMapper mapper, IUserService userService,
+        IGameService gameService)
     {
         _unitOfWork = unitOfWork;
         _context = context;
         _logger = logger;
         _mapper = mapper;
         _userService = userService;
+        _gameService = gameService;
+
     }
 
     [Authorize]
@@ -38,12 +44,8 @@ public class GameController : ControllerBase
     {
         try
         {
-            var games = await _unitOfWork.Games.UserGetAll();
-
-            if (games.Count == 0) return NoContent();
-            Console.WriteLine(games);
-            var results = _mapper.Map<List<GameSummaryDto>>(games);
-            return Ok(results);
+            //TODO FIX
+            return Ok("not implemented");
         }
         catch (Exception ex)
         {
@@ -62,13 +64,11 @@ public class GameController : ControllerBase
     {
         try
         {
-            var game = await _unitOfWork.Games.UserGet(id);
-
+            var game = await _gameService.GetGameSummaryDto(id);
             if (game == null)
                 return NotFound($"Game with ID '{id}' does not exist");
 
-            var result = _mapper.Map<GameSummaryDto>(game);
-            return Ok(result);
+            return Ok(game);
         } catch (Exception ex)
         {
             _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)}");

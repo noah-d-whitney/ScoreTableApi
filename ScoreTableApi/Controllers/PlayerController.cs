@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScoreTableApi.Dto;
+using ScoreTableApi.Dto.Player;
 using ScoreTableApi.IRepository;
 using ScoreTableApi.Models;
 using ScoreTableApi.Services;

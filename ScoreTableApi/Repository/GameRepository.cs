@@ -46,6 +46,9 @@ public class GameRepository : IBaseRepository<Game>
                 .Where(g => g.Id == id)
                 .Include(g => g.GameFormat)
                 .Include(g => g.GameStatus)
+                .Include(g => g.Teams)
+                .ThenInclude(t => t.Players)
+                .AsSplitQuery()
                 .SingleOrDefaultAsync();
             return game!;
         }

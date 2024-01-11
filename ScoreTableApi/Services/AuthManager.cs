@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using ScoreTableApi.Dto;
+using ScoreTableApi.Dto.User;
 using ScoreTableApi.Migrations;
 using ScoreTableApi.Models;
 

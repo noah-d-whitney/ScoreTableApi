@@ -1,9 +1,8 @@
-namespace ScoreTableApi.Dto.PlayerStatlines;
+namespace ScoreTableApi.Dto.Statline;
 
 public class PlayerStatlineDto
 {
     public int PlayerId { get; set; }
-    public string PlayerName { get; set; }
     public bool IsStarter { get; set; }
     public int Points { get; set; }
     public int Rebounds { get; set; }

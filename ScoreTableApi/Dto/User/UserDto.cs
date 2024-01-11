@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
 
-namespace ScoreTableApi.Dto;
+namespace ScoreTableApi.Dto.User;
 
 public class UserDto
 {
