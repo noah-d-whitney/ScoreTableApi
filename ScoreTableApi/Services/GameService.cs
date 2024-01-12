@@ -89,6 +89,7 @@ public class GameService: IGameService
 
             await CreatePlayerStatlinesByGame(createdGameEntityEntry.Entity);
 
+
             return createdGameEntityEntry;
         }
         catch (Exception e)
