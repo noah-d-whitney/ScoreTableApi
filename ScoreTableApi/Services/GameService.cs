@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ScoreTableApi.Controllers;
@@ -65,7 +66,7 @@ public class GameService: IGameService
             var team1Players = gameTeams[0].Players;
             var team2Players = gameTeams[1].Players;
 
-            if (team1Players.Intersect(team2Players).FirstOrDefault() == null)
+            if (team1Players.Intersect(team2Players).FirstOrDefault() != null)
                 throw new Exception("Game teams must not share players");
 
             var gameFormat = await GetGameFormatById(game.GameFormatId);
@@ -83,6 +84,8 @@ public class GameService: IGameService
             };
 
             var createdGameEntityEntry =  await _context.Games.AddAsync(createdGame);
+
+            await _context.SaveChangesAsync();
 
             await CreatePlayerStatlinesByGame(createdGameEntityEntry.Entity);
 
@@ -167,8 +170,12 @@ public class GameService: IGameService
         try
         {
             var createdStatlines = new List<PlayerStatline>();
+            var gameTeams = await _context.Teams
+                .Where(t => game.Teams.Contains(t))
+                .Include(t => t.Players)
+                .ToListAsync();
 
-            foreach (var team in game.Teams)
+            foreach (var team in gameTeams)
             {
                 foreach (var player in team.Players)
                 {
@@ -188,7 +195,8 @@ public class GameService: IGameService
                         Steals = 0,
                         IsStarter = false,
                         Tpa = 0,
-                        Tpm = 0
+                        Tpm = 0,
+                        UserId = _userService.GetUserId()
                     };
 
                     createdStatlines.Add(statline);

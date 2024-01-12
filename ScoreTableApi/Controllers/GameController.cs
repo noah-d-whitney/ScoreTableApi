@@ -86,44 +86,15 @@ public class GameController : ControllerBase
     {
         try
         {
-            var gameTeams = new List<Team>();
-            for (var i = 0; i < gameDto.TeamIds.Count; i++)
-            {
-                var id = gameDto.TeamIds[i];
-                var team = await _context.Teams.FindAsync(id);
-                if (team == null) ModelState.AddModelError("TeamIds", $"Could not find Team {i + 1} with ID '{id}'");
-                gameTeams.Add(team!);
-            }
-
-            var gameFormat =
-                await _context.GameFormats.FindAsync(gameDto.GameFormatId);
-            if (gameFormat == null) ModelState.AddModelError("GameFormatId", $"Could not find game format with ID '{gameDto.GameFormatId}'");
-
-            var gameStatusId = 1;
-            var gameStatus = await _context.GameStatus.FindAsync(gameStatusId);
-            if (gameStatus == null)
-                ModelState.AddModelError("GameStatusId",
-                    $"Could not find game status with ID '{gameStatusId}'");
-
-
             if (!ModelState.IsValid)
                 return BadRequest(ValidationProblem(ModelState));
 
-            var game = new Game
-            {
-                Teams = gameTeams,
-                GameFormat = gameFormat!,
-                GameStatus = gameStatus!,
-                DateTime = gameDto.DateTime,
-                PeriodCount = gameDto.PeriodCount,
-                PeriodLength = gameDto.PeriodLength
-            };
+            var createdGame = await _gameService.CreateGame(gameDto);
 
-            var createdGame = await _unitOfWork.Games.Create(game);
             await _unitOfWork.Save();
 
             return CreatedAtRoute("GetGame", new { id = createdGame.Entity.Id },
-                createdGame.Entity);
+                await _gameService.GetGameSummaryDto(createdGame.Entity.Id));
         }
         catch (Exception ex)
         {
