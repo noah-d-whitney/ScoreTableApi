@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ScoreTableApi.Data;
 
@@ -11,9 +12,11 @@ using ScoreTableApi.Data;
 namespace ScoreTableApi.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240113201054_AddedTeamIdToPlayerStatlines")]
+    partial class AddedTeamIdToPlayerStatlines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,13 +69,13 @@ namespace ScoreTableApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2276a1eb-9a32-476f-998a-89a3cbf79eac",
+                            Id = "1239e2f3-24ae-419c-9623-ace8836fb6d8",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "c0c537bd-f583-4c6a-9163-288d513d7946",
+                            Id = "0a4116da-5d3a-4dcb-b6cd-6025c3f2e16d",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -369,8 +372,6 @@ namespace ScoreTableApi.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.HasIndex("TeamId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("PlayerStatlines");
@@ -603,12 +604,6 @@ namespace ScoreTableApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ScoreTableApi.Models.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ScoreTableApi.Models.User", "User")
                         .WithMany("PlayerStatlines")
                         .HasForeignKey("UserId")
@@ -618,8 +613,6 @@ namespace ScoreTableApi.Migrations
                     b.Navigation("Game");
 
                     b.Navigation("Player");
-
-                    b.Navigation("Team");
 
                     b.Navigation("User");
                 });

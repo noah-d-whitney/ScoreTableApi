@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ScoreTableApi.Controllers;
@@ -130,7 +129,6 @@ public class GameService: IGameService
 
             await CreatePlayerStatlinesByGame(createdGameEntityEntry.Entity);
 
-
             return createdGameEntityEntry;
         }
         catch (Exception e)
@@ -140,13 +138,38 @@ public class GameService: IGameService
         }
     }
 
-    // TODO Calculate statline from player statlines
-    private static List<TeamStatlineDto> GetTeamStatlines(Game game)
+    private List<TeamStatlineDto> GetTeamStatlines(Game game)
     {
         var teamStatlines = new List<TeamStatlineDto>();
+        var playerStatlines = _context.PlayerStatlines
+            .Where(ps => ps.UserId == _userService.GetUserId())
+            .Where(ps => ps.GameId == game.Id)
+            .ToList();
         foreach (var team in game.Teams)
         {
-            teamStatlines.Add(new TeamStatlineDto(team.Name, team.Id));
+            var teamStatline = new TeamStatlineDto(team.Name, team.Id);
+            var teamPlayerStatlines = playerStatlines
+                .Where(ps => ps.TeamId == team.Id)
+                .ToList();
+
+            foreach (var statline in teamPlayerStatlines)
+            {
+                teamStatline.Score += statline.Points;
+                teamStatline.Assists += statline.Assists;
+                teamStatline.Blocks += statline.Blocks;
+                teamStatline.Rebounds += statline.Rebounds;
+                teamStatline.Steals += statline.Steals;
+                teamStatline.Fouls += statline.Fouls;
+                teamStatline.Turnovers += statline.Turnovers;
+                teamStatline.Fga += statline.Fga;
+                teamStatline.Fgm += statline.Fgm;
+                teamStatline.Fta += statline.Fta;
+                teamStatline.Ftm += statline.Ftm;
+                teamStatline.Tpa += statline.Tpa;
+                teamStatline.Tpm += statline.Tpm;
+            }
+
+            teamStatlines.Add(teamStatline);
         }
 
         return teamStatlines;
@@ -260,7 +283,8 @@ public class GameService: IGameService
                         IsStarter = false,
                         Tpa = 0,
                         Tpm = 0,
-                        UserId = _userService.GetUserId()
+                        UserId = _userService.GetUserId(),
+                        TeamId = team.Id,
                     };
 
                     createdStatlines.Add(statline);
