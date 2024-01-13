@@ -44,14 +44,14 @@ public class GameController : ControllerBase
     {
         try
         {
-            //TODO FIX
-            return Ok("not implemented");
+            var gameSummaries = await _gameService.GetAllGameSummaryDtos();
+
+            return Ok(gameSummaries);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Something went wrong in the {nameof(GetGames)}");
-            return StatusCode(500,
-                "Internal Sever Error. Please try Again Later.");
+            return StatusCode(500, ex.Message);
         }
     }
 
@@ -64,16 +64,15 @@ public class GameController : ControllerBase
     {
         try
         {
-            var game = await _gameService.GetGameSummaryDto(id);
+            var game = await _gameService.GetGameDto(id);
             if (game == null)
-                return NotFound($"Game with ID '{id}' does not exist");
+                return NotFound($"Game with ID {id} does not exist");
 
             return Ok(game);
         } catch (Exception ex)
         {
             _logger.LogError(ex, $"Something went wrong in the {nameof(GetGame)}");
-            return StatusCode(500,
-                "Internal Sever Error. Please try Again Later.");
+            return StatusCode(500, ex);
         }
     }
 
@@ -94,7 +93,7 @@ public class GameController : ControllerBase
             await _unitOfWork.Save();
 
             return CreatedAtRoute("GetGame", new { id = createdGame.Entity.Id },
-                await _gameService.GetGameSummaryDto(createdGame.Entity.Id));
+                await _gameService.GetGameDto(createdGame.Entity.Id));
         }
         catch (Exception ex)
         {

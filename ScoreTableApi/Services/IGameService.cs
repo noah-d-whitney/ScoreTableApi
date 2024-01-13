@@ -7,6 +7,7 @@ namespace ScoreTableApi.Services;
 
 public interface IGameService
 {
-    public Task<GameSummaryDto> GetGameSummaryDto(int gameId);
+    public Task<GameDto?> GetGameDto(int gameId);
     public Task<EntityEntry<Game>> CreateGame(CreateGameDto game);
+    public Task<List<GameSummaryDto>> GetAllGameSummaryDtos();
 }

@@ -28,7 +28,51 @@ public class GameService: IGameService
         _notStartedGameStatusId = 1;
     }
 
-    public async Task<GameSummaryDto> GetGameSummaryDto(int gameId)
+    public async Task<List<GameSummaryDto>> GetAllGameSummaryDtos()
+    {
+        try
+        {
+            var games = await _context.Games
+                .Where(g => g.UserId == _userService.GetUserId())
+                .Include(g => g.GameStatus)
+                .Include(g => g.GameFormat)
+                .Include(g => g.Teams)
+                .ToListAsync();
+
+            var gameSummaries = new List<GameSummaryDto>();
+
+            foreach (var game in games)
+            {
+                gameSummaries.Add(ConvertToSummaryDto(game));
+            }
+
+            return gameSummaries;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private GameSummaryDto ConvertToSummaryDto(Game game)
+    {
+        var gameSummaryDto = _mapper.Map<Game, GameSummaryDto>(game);
+        gameSummaryDto.TeamStats = GetTeamStatlines(game);
+
+        return gameSummaryDto;
+    }
+
+    private GameDto ConvertToDto(Game game)
+    {
+        var gameDto = _mapper.Map<Game, GameDto>(game);
+        gameDto.TeamStats = GetTeamStatlines(game);
+        gameDto.Players = GetGamePlayers(game);
+
+        return gameDto;
+    }
+
+    public async Task<GameDto?> GetGameDto(int gameId)
     {
         try
         {
@@ -38,18 +82,15 @@ public class GameService: IGameService
                 .Include(g => g.GameStatus)
                 .Include(g => g.GameFormat)
                 .Include(g => g.Teams)
+                    .ThenInclude(t => t.Players)
+                    .AsSplitQuery()
                 .SingleOrDefaultAsync();
 
-            if (game == null)
-            {
-                throw new Exception(
-                    $"Game with ID {gameId} could not be found");
-            }
+            if (game == null) return null;
 
-            var gameSummaryDto = _mapper.Map<Game, GameSummaryDto>(game);
-            gameSummaryDto.TeamStats = GetTeamStatlines(game);
+            var gameDto = ConvertToDto(game);
 
-            return gameSummaryDto;
+            return gameDto;
         }
         catch (Exception e)
         {
@@ -99,6 +140,7 @@ public class GameService: IGameService
         }
     }
 
+    // TODO Calculate statline from player statlines
     private static List<TeamStatlineDto> GetTeamStatlines(Game game)
     {
         var teamStatlines = new List<TeamStatlineDto>();
@@ -108,6 +150,27 @@ public class GameService: IGameService
         }
 
         return teamStatlines;
+    }
+
+    private List<GamePlayerDto> GetGamePlayers(Game game)
+    {
+        var gamePlayers = new List<GamePlayerDto>();
+        foreach (var team in game.Teams)
+        {
+            foreach (var player in team.Players)
+            {
+                var gamePlayer = _mapper.Map<Player, GamePlayerDto>(player);
+                gamePlayer.Team = _mapper.Map<Team, GameTeamDto>(team);
+                var statline = _context.PlayerStatlines
+                    .Where(ps => ps.UserId == _userService.GetUserId())
+                    .Where(ps => ps.GameId == game.Id)
+                    .Single(ps => ps.PlayerId == player.Id);
+                gamePlayer.Statline = _mapper.Map<PlayerStatline, PlayerStatlineDto>(statline);
+                gamePlayers.Add(gamePlayer);
+            }
+        }
+
+        return gamePlayers;
     }
 
     private async Task<List<Team>> GetTeamListFromIds(IEnumerable<int> teamIds)

@@ -13,5 +13,4 @@ public class GameDto
     public List<GameTeamDto> Teams { get; set; }
     public List<TeamStatlineDto> TeamStats { get; set; }
     public List<GamePlayerDto> Players { get; set; }
-
 }
